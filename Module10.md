@@ -75,3 +75,9 @@ In this module we will configure a CloudWatch Events rule which will listen to A
 1. Check your email, within 1-2 minutes you should receive an email for the failed job notification:
 
 	<img src="images/failure-email-notification.png"  width="70%"/>
+
+## Next step
+
+Congratulations, you have successfully built a Batch Job in a Docker container that can elastically scale to your needs and automatically retries upon failures!
+
+You can now go to the [**Cleanup Section**](./cleanup.md) to remove the workshop resources from your environment
