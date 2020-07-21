@@ -14,5 +14,6 @@ A forked version of [ec2-spot-montecarlo-workshop](https://github.com/aws-sample
 * [Module 6: Create an IAM role for the container](./Module6.md)
 * [Module 7: Create AWS Batch job](./Module7.md)
 * [Module 8: Submit Batch job with retries](./Module8.md)
-* [Extra Credit](ExtraCredit.md) 
+* [Module 9: Submit a job programmatically](./Module9.md)
+* [Module 10: Send a notification when a job is finished running](./Module10.md)
 * [Cleanup](./cleanup.md)
