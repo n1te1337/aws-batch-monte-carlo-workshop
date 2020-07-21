@@ -50,6 +50,8 @@ In this module we will configure a CloudWatch Events rule which will listen to A
 
 1. For **Targets**, choose **Add target**. For **Target type**, choose **SNS topic**, **BatchJobFailedAlert**
 
+	<img src="images/register-event-rule.png"  width="70%"/>
+
 1. Choose **Configure details**
 
 1. For **Rule definition**, type a name and description for your rule and then choose **Create rule**
@@ -60,10 +62,16 @@ In this module we will configure a CloudWatch Events rule which will listen to A
 
 1. Open the AWS Batch console [https://console\.aws\.amazon\.com/batch/](https://console.aws.amazon.com/batch/)
 
-1. Submit a new AWS Batch job. For the job's command, override the command to exit the container with an exit code of 1:
+1. Submit a new AWS Batch job. When creating a job, in the **Container properties** section, for the job's **Command**, override the command to exit the container with an exit code of 1:
 
    ```
    /bin/sh, -c, 'exit 1'
    ```
 
-1. Check your email, within 1-2 minutes you should receive an email for the failed job notification
+	Like so:
+
+	<img src="images/fail-job-with-exit-error-code.png"  width="70%"/>
+
+1. Check your email, within 1-2 minutes you should receive an email for the failed job notification:
+
+	<img src="images/failure-email-notification.png"  width="70%"/>
