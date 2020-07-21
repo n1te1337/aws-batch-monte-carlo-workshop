@@ -79,4 +79,4 @@ To submit a job programmatically, we need to create a script which will submit t
 
 ## Next step
 
-Move on to [**Module 10: Send a notification when a job is finished running**](./Module10.md)
+Move on to [**Module 10: Send a notification when a job execution fails**](./Module10.md)

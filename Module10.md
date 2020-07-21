@@ -1,82 +1,69 @@
-# Module 10: Send a notification when a job is finished running
+# Module 10: Send a notification when a job execution fails
 
-So far we've been using the AWS Console to submit our jobs, it's time to submit one programmatically.
+In this module we will configure a CloudWatch Events rule which will listen to AWS Batch events for when a job enters a `FAILED` status. We will then send an email notification with the failed job details
 
-To submit a job programmatically, we need to create a script which will submit the job via the AWS SDK.
+## 1. Create and subscribe to an Amazon SNS Topic
 
-## Instructions
+ We will first configure an Amazon SNS topic to serve as an event target and send a notification email:
 
-1. Create a file in the Cloud9 IDE by going to **File** --> **New File**
+1. Open the Amazon SNS console at [https://console\.aws\.amazon\.com/sns/v3/home](https://console.aws.amazon.com/sns/v3/home)
 
-	<img src="images/new-file.png" width="60%" />
+1. Choose **Topics**, **Create new topic**
 
-1. Paste in below as the content for the submit_job script:
+1. For **Topic name**, enter **BatchJobFailedAlert** and choose **Create topic**
 
-	```
-	import boto3
+1. Select the topic that you just created. On the **Topic details: BatchJobFailedAlert** screen, choose **Create subscription**
 
-	# Configure the variables for your AWS Batch environment
-	job_name = "your job name"
-	job_definition_name = "your job definition name"
-	job_queue_name = "your job queue name"
-	s3_bucket_name = "your s3 bucket name"
+1. For **Protocol**, choose **Email**. For **Endpoint**, enter an email address to which you currently have access and choose **Create subscription**
 
-	# Submit the job
-	batch = boto3.client('batch')
-	response = batch.submit_job(
-			jobName=job_name,
-			jobDefinition=job_definition_name,
-			jobQueue=job_queue_name,
-			parameters={
-					's3bucket': s3_bucket_name,
-					'iterations': '1000',
-					'stock': 'AMZN'
-			},
-	)
+1.  Check your email account, and wait to receive a subscription confirmation email message. When you receive it, choose **Confirm subscription**
 
-	# Print the response
-	print(response)
+## 2. Register Event Rule
 
-	```
+ Next, we will register an event rule that captures AWS Batch failed events:
 
-	Take a moment to review at how a simple script to submit a job programmatically is written:
+1. Open the CloudWatch console at [https://console\.aws\.amazon\.com/cloudwatch/](https://console.aws.amazon.com/cloudwatch/)
 
-	- **import boto3** - Imports the AWS Python SDK
+1. In the navigation pane, choose **Events**, **Create rule**
 
-	- **batch = boto3.client('batch')** - Initializes the AWS Batch client
+1. Choose **Show advanced options**, **edit**
 
-	- **batch.submit_job()** - Submits the job to AWS Batch based on the specified parameters
+1. For **Build a pattern that selects events for processing by your targets**, replace the existing text with the following text:
 
-	- **print(response)** - Finally, it prints the response from AWS Batch
+   ```
+   {
+     "detail-type": [
+       "Batch Job State Change"
+     ],
+     "source": [
+       "aws.batch"
+     ],
+     "detail": {
+       "status": [
+         "FAILED"
+       ]
+     }
+   }
+   ```
 
+   This code defines a CloudWatch Events rule that matches any event where the job status is `FAILED`
 
-1. Save the file as **submit_job.py** in the `src/` folder
+1. For **Targets**, choose **Add target**. For **Target type**, choose **SNS topic**, **BatchJobFailedAlert**
 
-	<img src="images/submit-programmatic-job.png"  width="50%"/>
+1. Choose **Configure details**
 
-1. In the terminal:
+1. For **Rule definition**, type a name and description for your rule and then choose **Create rule**
 
-	Ensure you are in the `src/` directory:
+## 3. Test Your Rule
 
-	```
-	cd ~/environment/aws-batch-monte-carlo-workshop/src
-	```
+ To test the flow, we will submit a job that exits shortly after it starts with a non-zero exit code:
 
-	Execute the script via terminal
+1. Open the AWS Batch console [https://console\.aws\.amazon\.com/batch/](https://console.aws.amazon.com/batch/)
 
-	```
-	python submit_job.py
-	```
+1. Submit a new AWS Batch job. For the job's command, override the command to exit the container with an exit code of 1:
 
-1. You should see the successful response from AWS Batch
+   ```
+   /bin/sh, -c, 'exit 1'
+   ```
 
-	<img src="images/submit-programmatic-job-response.png"  width="70%"/>
-
-1. When you go back to the AWS Batch console you'll be able to see the job up and running
-
-	<img src="images/programmatic-job-running.png"  width="70%"/>
-
-
-## Next step
-
-Move on to [**Module 10: Send a notification when a job finished running**](./Module10.md)
+1. Check your email, within 1-2 minutes you should receive an email for the failed job notification
