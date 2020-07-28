@@ -9,7 +9,7 @@ As an optional step, you can test out Cloud9's debugging features
 1. In the terminal window of the cloud9 environment, run the below to clone the github repo:
 
 	```bash
-	 git clone https://github.com/angelarw/aws-batch-monte-carlo-workshop
+	 git clone https://github.com/n1te1337/aws-batch-monte-carlo-workshop
 	```
 	
 1. Enter the downloaded directory with 
